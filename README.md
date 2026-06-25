@@ -6,7 +6,7 @@ A sleek, content-based movie recommendation system built using Python and Stream
 
 ## 🚀 Live Demo
 
-🔗 [Click here to view the live application](https://movie-recommendation-system-kv.streamlit.app/) *(Replace with your actual deployment link)*
+🔗 [Click here to view the live application](https://movie-recommendation-system-kv.streamlit.app/)
 
 ---
 
