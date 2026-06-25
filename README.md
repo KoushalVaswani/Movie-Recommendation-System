@@ -20,29 +20,43 @@ This project is designed to help users discover new movies by analyzing metadata
 
 *   **Language:** Python
 *   **Data Libraries:** Pandas, NumPy
-*   **Machine Learning:** Scikit-learn
+*   **Machine Learning:** Scikit-learn (CountVectorizer, Cosine Similarity)
 *   **Web Framework:** Streamlit
 *   **Model Serialization:** Pickle
 
 ---
 
-## 🧠 How It Works
+## 🧠 Core Theory & Architecture
 
-1.  **Data Preprocessing:** Cleaning and combining movie datasets (handling missing values, parsing JSON structures for genres/cast).
-2.  **Feature Extraction:** Creating a unified "tags" column combining genres, keywords, overview, cast, and director.
-3.  **Vectorization:** Converting text tags into numerical vectors using `CountVectorizer` or `TF-IDF`.
-4.  **Similarity Computation:** Applying **Cosine Similarity** to calculate the mathematical closeness between movie vectors.
-5.  **Recommendation Engine:** Fetching the top 5 most similar movies based on the highest similarity scores.
+This system relies on **Content-Based Filtering**, meaning it recommends items similar to what a user likes, based on the item attributes (metadata) rather than user behavior.
+
+### 1. Data Preprocessing & Feature Engineering
+*   **Data Merging:** Combining movie datasets (metadata and credits) using unique identifiers.
+*   **Cleaning:** Extracting names from complex JSON/stringified columns (like extracting top 3 actors from `cast` or the director from `crew`).
+*   **Tag Generation:** Merging all textual descriptive elements—`overview`, `genres`, `keywords`, `cast`, and `director`—into a single large string block called **"tags"** for each movie.
+
+### 2. Text Vectorization (The Mathematical Representation)
+Computers don't understand raw text, so we convert the "tags" into numerical vectors. 
+*   **Bag of Words (CountVectorizer):** We tokenized the tags and extracted the top $N$ (e.g., 5,000) most frequent words across all movies, excluding common English stop words (*and, the, is, etc.*).
+*   Each movie is then represented as a vector in an $N$-dimensional space, where the value at each coordinate represents the frequency of a specific word in that movie's tags.
+
+### 3. Measuring Proximity (Cosine Similarity)
+Instead of calculating the Euclidean distance (which can be biased by the length of the text/tags), we calculate the **Cosine Similarity** between the movie vectors.
+
+Mathematically, it measures the cosine of the angle between two multi-dimensional vectors:
+$$\text{Similarity}(A, B) = \cos(\theta) = \frac{A \cdot B}{\|A\| \|B\|}$$
+
+*   A value close to **1** means the angle is $0^\circ$, implying the movies are highly similar.
+*   A value close to **0** implies no textual or contextual overlap.
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-├── dataset/                  # Raw TMDB movie datasets
-├── app.py                    # Streamlit web application code
-├── movie_recommender.ipynb   # Jupyter notebook for data analysis & model building
-├── similarity.pkl            # Precomputed similarity matrix (generated)
-├── movie_list.pkl            # Preprocessed movie dataframe (generated)
+├── data/                     # Raw or preprocessed TMDB datasets
+├── models/                   # Serialized pickle files (.pkl) for the app
+├── app.py                    # Streamlit web application frontend/backend
+├── .gitignore                # Specifies intentionally untracked files to ignore
 ├── requirements.txt          # Python dependencies
 └── README.md                 # Project documentation
